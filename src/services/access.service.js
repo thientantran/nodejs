@@ -3,6 +3,9 @@
 const shopModel = require("../models/shop.model")
 const bcrypt = require("bcrypt")
 const crypto = require("crypto")
+const KeyTokenService = require("./keyToken.service")
+const { createTokenPair } = require("../auth/authUtils")
+const { getInfoData } = require("../utils")
 const RoleShop = {
     SHOP:"SHOP",
     WRITER:"WRITER",
@@ -16,6 +19,7 @@ class AccessService {
             const holderShop = await shopModel.findOne({email}).lean()
             // .lean() is used to return a plain javascript object instead of a mongoose document
             if(holderShop){
+                console.log("Shop already exist")
                 return  {
                     code :"xxxx",
                     message: "Shop already exist"
@@ -23,14 +27,46 @@ class AccessService {
             }
             const passwordHash = await bcrypt.hash(password, 10)
             const newShop = await shopModel.create({name, email, password: passwordHash , roles: [RoleShop.SHOP]})
-            console.log("new shop:",newShop)
             if(newShop) {
                 // create privateKey and public key
                 console.log("create privateKey and public key")
                 const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
                     modulusLength: 4096,
+                    publicKeyEncoding: {
+                        type: 'pkcs1',
+                        format: 'pem'
+                    },
+                    privateKeyEncoding: {
+                        type: 'pkcs1',
+                        format: 'pem',
+                    }
                 });
-                console.log("zo: ",privateKey, publicKey)
+                
+                const publicKeyString = await KeyTokenService.createKeyToken({userId: newShop._id, publicKey})
+                if(!publicKeyString){
+                    return {
+                        code :"xxx",
+                        message: "Error create publicKey"
+                    }
+                }
+
+                const publicKeyObject = crypto.createPublicKey(publicKeyString)
+
+                //create token pair
+                const tokens = await createTokenPair({userId: newShop._id, email}, publicKeyObject, privateKey)
+                console.log("Created token success: ")
+
+                return {
+                    code:201,
+                    metadata:{
+                        shop: getInfoData({fildes: ["_id", "name", "email"], object: newShop}),
+                        tokens
+                    }
+                }
+            }
+            return{
+                code:200,
+                metadata: null
             }
 
         } catch (error) {

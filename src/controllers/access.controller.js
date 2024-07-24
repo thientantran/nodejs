@@ -9,10 +9,7 @@ class AccessController {
             const {name, email, password} = req.body
             console.log(name, email, password)
             const result = await AccessService.signUp({name, email, password})
-            return res.status(201).json({
-                code : '20001',
-                metadata: {userid: 1}
-            })
+            return res.status(201).json(result)
 
     } catch (error) {
         next(error)
