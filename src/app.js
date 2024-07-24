@@ -4,7 +4,8 @@ const morgan = require('morgan');
 const {default:helmet} = require('helmet');
 const compression = require('compression');
 const app = express()
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // init middleware
 app.use(morgan('dev')); //dev, combine, common, short, tiny, 
 app.use(helmet())
@@ -14,10 +15,7 @@ require("./dbs/init.mongodb")
 // const {checkOverLoad} = require("./helpers/check.connect")
 // checkOverLoad()
 // routes
-app.get("/", (req, res, next) => {
-    const strCompress = "Hello World"
-    return res.status(200).json({ message: "Hello World" , metadata: strCompress.repeat(100000)});
-})
+app.use("/", require("./routes"))
 // handling error
 
 
