@@ -5,15 +5,15 @@ const AccessService = require("../services/access.service")
 class AccessController {
    
     signUp = async (req, res, next) => {
-    try {   
+    // try {   
             const {name, email, password} = req.body
             console.log(name, email, password)
             const result = await AccessService.signUp({name, email, password})
             return res.status(201).json(result)
 
-    } catch (error) {
-        next(error)
-    }
+    // } catch (error) {
+    //     next(error)
+    // }
     }
 }
 

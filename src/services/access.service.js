@@ -6,6 +6,7 @@ const crypto = require("node:crypto")
 const KeyTokenService = require("./keyToken.service")
 const { createTokenPair } = require("../auth/authUtils")
 const { getInfoData } = require("../utils")
+const { BadRequestError } = require("../core/error.response")
 const RoleShop = {
     SHOP:"SHOP",
     WRITER:"WRITER",
@@ -15,15 +16,18 @@ const RoleShop = {
 
 class AccessService {
     static signUp = async ({name, email, password}) => {
-        try {
+        // try {
+        // make a error: a is not defined
+            // a
             const holderShop = await shopModel.findOne({email}).lean()
             // .lean() is used to return a plain javascript object instead of a mongoose document
             if(holderShop){
                 console.log("Shop already exist")
-                return  {
-                    code :"xxxx",
-                    message: "Shop already exist"
-                }
+                throw new BadRequestError("Shop already exist")
+                // return  {
+                    // code :"xxxx",
+                    // message: "Shop already exist"
+                // }
             }
             const passwordHash = await bcrypt.hash(password, 10)
             const newShop = await shopModel.create({name, email, password: passwordHash , roles: [RoleShop.SHOP]})
@@ -72,13 +76,13 @@ class AccessService {
                 metadata: null
             }
 
-        } catch (error) {
-            return {
-                code :"xxx",
-                message: error.message,
-                status: 'error'
-            }
-        }
+        // } catch (error) {
+        //     return {
+        //         code :"xxx",
+        //         message: error.message,
+        //         status: 'error'
+        //     }
+        // }
     }
 }
 
