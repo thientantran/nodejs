@@ -17,8 +17,11 @@ var keyTokenSchema = new Schema({
     publicKey:{
         type: String, required: true
     },
-    refreshToken:{
+    refreshTokensUsed:{
         type: Array, default:[]
+    },
+    accessToken:{
+        type: String, required: true
     },
 },{
     collection: CONNECTION_NAME,
