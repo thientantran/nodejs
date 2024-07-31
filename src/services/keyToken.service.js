@@ -23,12 +23,39 @@ class KeyTokenService{
     }
 
     static findByUserId = async (userId) => {
-        return await keytokenModel.findOne({user: new Types.ObjectId(userId) }).lean()
-        // return await keytokenModel.findOne({user: userId }).lean()
+        console.log("userId:: ", userId)
+        // return await keytokenModel.findOne({user: new Types.ObjectId(userId) }).lean()
+        return await keytokenModel.findOne({user: userId }).lean()
     }
 
     static removeKeyById = async (id ) => {
         return await keytokenModel.deleteOne({ _id: id });
+    }
+
+    static findByRefreshTokenUsed = async (refreshToken) => {
+        return await keytokenModel.findOne({refreshTokensUsed: refreshToken}).lean()
+    }
+
+    static findByRefreshToken = async (refreshToken) => {
+        return await keytokenModel.findOne({refreshToken}).lean()
+    }
+
+
+    static deleteKeyById = async (userId) => {
+        return await keytokenModel.deleteOne({user: userId})
+    }
+
+    static async updateToken(id, updateData) {
+        return keytokenModel.findByIdAndUpdate(id, {
+            $set: {
+                refreshToken: updateData.refreshToken
+            },
+            $addToSet: {
+                refreshTokensUsed: updateData.refreshTokensUsed
+            }
+        }, { new: true });
+//         { new: true }: Ensures that the method returns the updated document.
+// Without { new: true }, the method would return the document as it was before the update.
     }
 
 }
