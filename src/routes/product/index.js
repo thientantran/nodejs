@@ -10,4 +10,12 @@ router.use(authenticationV2)
 
 router.post("", asyncHandler(productController.createProduct))
 
+// QUERY
+/**
+ * @desc Get all Drafts for shop
+ * @route GET /v1/api/product/drafts/all
+ * @access Private
+ * @returns {Array} - All drafts for shop
+ */
+router.get("/drafts/all", asyncHandler(productController.getAllDraftsForShop))
 module.exports = router
