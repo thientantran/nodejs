@@ -11,6 +11,20 @@ const findAllPublishForShop = async ({query, limit, skip}) => {
     return await queryProducts({query, limit, skip})
 }
 
+const searchProductsByUser = async ({keySearch}) => {
+    const regexSearch = new RegExp(keySearch)
+    if(!keySearch){
+        return await product.find({isPublished: true}).lean()
+    } 
+    const results = await product.find({
+        $text: {$search: regexSearch},
+        isPublished: true
+    }, {score: {$meta: 'textScore'}})
+    .sort({score: {$meta: 'textScore'}})
+    .lean()
+    return results
+}
+
 const publishProductByShop = async ({product_shop, product_id}) => {
     const foundShop = await product.findOne({
         product_shop: new Types.ObjectId(product_shop),
@@ -52,5 +66,6 @@ module.exports = {
     findAllDraftsForShop,
     publishProductByShop,
     findAllPublishForShop,
-    unPublishProductByShop
+    unPublishProductByShop,
+    searchProductsByUser
 }

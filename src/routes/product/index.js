@@ -6,6 +6,7 @@ const asyncHandler = require('../../helpers/asyncHandler')
 const productController = require('../../controllers/product.controller')
 const router = express.Router()
 
+router.get("/search", asyncHandler(productController.getListSearchProduct))
 router.use(authenticationV2)
 
 router.post("", asyncHandler(productController.createProduct))

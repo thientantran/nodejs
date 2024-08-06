@@ -35,6 +35,13 @@ class ProductController{
         }).send(res)
     }
 
+    getListSearchProduct = async (req, res, next) => {
+        new SuccessResponse({
+            message: "Search product successfully",
+            metadata: await ProductFactory.searchProducts(req.query)
+        }).send(res)
+    }
+
     // PUT
     publishProductByShop = async (req, res, next) => {
         new SuccessResponse({

@@ -56,6 +56,10 @@ var productSchema = new Schema({
     timestamps: true
 })
 
+// create index for search
+productSchema.index({product_name: 'text', product_description: 'text'})
+//set up a text index in MongoDB using Mongoose, you can perform full-text searches using the $text operator. However, the $text operator searches for whole words and does not support partial matches or regular expressions directly. This is why searching for "N" might not return "New Jeans", but searching for "New" will.
+//https://anonystick.com/blog-developer/full-text-search-mongodb-chi-mot-bai-viet-khong-can-nhieu-2022012063033379
 //Document middleware
 productSchema.pre('save', function(next){
     // this.product_slug = this.product_name.toLowerCase().split(' ').join('-')
