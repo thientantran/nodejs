@@ -7,6 +7,9 @@ const productController = require('../../controllers/product.controller')
 const router = express.Router()
 
 router.get("/search", asyncHandler(productController.getListSearchProduct))
+router.get("/:product_id", asyncHandler(productController.findProduct))
+router.get("", asyncHandler(productController.findAllProduct))
+
 router.use(authenticationV2)
 
 router.post("", asyncHandler(productController.createProduct))

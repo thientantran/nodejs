@@ -42,6 +42,22 @@ class ProductController{
         }).send(res)
     }
 
+    findAllProduct = async (req, res, next) => {
+        const result = await ProductFactory.findAllProduct(req.query)
+        new SuccessResponse({
+            message: "Get All product successfully",
+            metadata : result
+        }).send(res)
+    }
+
+    findProduct = async(req, res, next) => {
+        const result = await ProductFactory.findProduct({ product_id: req.params.product_id })
+        new SuccessResponse({
+            message: "Get a product successfully",
+            metadata : result
+        }).send(res)
+    }
+
     // PUT
     publishProductByShop = async (req, res, next) => {
         new SuccessResponse({
