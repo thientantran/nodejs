@@ -18,9 +18,8 @@ class DiscountController {
         new SuccessResponse({
             message: "Get all product discount codes",
             metadata: await DiscountService.getAllProductWithDiscountCode({
-                code : req.params.code,
-                shopId: req.user.userId,
-                userId: req.user.userId,
+                code : req.query.code,
+                shopId: req.query.shopId,
             })
         }).send(res)
     }
@@ -33,6 +32,18 @@ class DiscountController {
             })
         }).send(res)
     }
+
+    getDiscountAmount = async(req, res, next) => { 
+        new SuccessResponse({
+            message: "Get discount amount",
+            metadata: await DiscountService.getDiscountAmount({
+                ...req.body,
+            })
+        }).send(res)
+    }
+
+
+    
 }
 
 module.exports = new DiscountController()

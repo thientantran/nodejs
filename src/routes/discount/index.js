@@ -7,9 +7,10 @@ const discountController = require('../../controllers/discount.controller')
 
 const router = express.Router()
 router.get("/shop/:shopId", asyncHandler(discountController.getAllDiscountCodeByShopId))
+router.post("/getDiscountAmount", asyncHandler(discountController.getDiscountAmount))
+router.get("/list-product-code", asyncHandler(discountController.getAllProductWithDiscountCode))
 
 router.use(authenticationV2)
-router.get("/:code", asyncHandler(discountController.getAllProductWithDiscountCode))
 router.post("", asyncHandler(discountController.createDiscountCode))
 
 module.exports = router
