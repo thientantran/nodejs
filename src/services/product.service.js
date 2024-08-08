@@ -2,6 +2,7 @@
 
 const { BadRequestError } = require("../core/error.response")
 const {product, clothing, electronic, furniture} = require("../models/product.model")
+const { insertInventory } = require("../models/repo/inventory.repo")
 const { findAllDraftsForShop, publishProductByShop,findAllPublishForShop,unPublishProductByShop, searchProductsByUser, findAllProduct, findProduct, updateProductById } = require("../models/repo/product.repo")
 const { removeNullObject, updateNestedObjectParser } = require("../utils")
 
@@ -89,7 +90,12 @@ class Product{
 
     // create new product
     async createProduct(product_id){ // để dùng id chung với các sub-class
-        return await product.create({...this, _id : product_id})
+        const newProduct = await product.create({...this, _id : product_id})
+        if(newProduct){
+            // add product strock vào inventory
+            await insertInventory({productId: product_id, shopId: this.product_shop, stock: this.product_quantity})
+        }
+        return newProduct
     }
 
     // update product
