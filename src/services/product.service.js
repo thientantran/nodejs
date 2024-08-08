@@ -2,7 +2,8 @@
 
 const { BadRequestError } = require("../core/error.response")
 const {product, clothing, electronic, furniture} = require("../models/product.model")
-const { findAllDraftsForShop, publishProductByShop,findAllPublishForShop,unPublishProductByShop, searchProductsByUser, findAllProduct, findProduct } = require("../models/repo/product.repo")
+const { findAllDraftsForShop, publishProductByShop,findAllPublishForShop,unPublishProductByShop, searchProductsByUser, findAllProduct, findProduct, updateProductById } = require("../models/repo/product.repo")
+const { removeNullObject, updateNestedObjectParser } = require("../utils")
 
 // define Factory class to create product
 class ProductFactory {
@@ -29,6 +30,13 @@ class ProductFactory {
         //     default:
         //         throw new BadRequestError(`Invalid product type ${type}`)
         // }
+    }
+    static async updateProduct(type, product_id, payload){
+        const productClass = ProductFactory.productRegistry[type]
+        if(!productClass){
+            throw new BadRequestError(`Invalid product type ${type}`)
+        }
+        return new productClass(payload).updateProduct(product_id)
     }
 
     //query 
@@ -83,6 +91,11 @@ class Product{
     async createProduct(product_id){ // để dùng id chung với các sub-class
         return await product.create({...this, _id : product_id})
     }
+
+    // update product
+    async updateProduct(product_id, bodyUpdate){
+    return await updateProductById({product_id, bodyUpdate, model:product})
+    }
 }
 
 // Define sub-class for differant product types Clothing
@@ -98,6 +111,22 @@ class Clothing extends Product {
             throw new BadRequestError("Failed to create new product")
         }
         return newProduct
+    }
+
+    async updateProduct(product_id){
+        // 1. remove attr has null value
+        const objectParams = removeNullObject(this)
+        // 2. check xem updae ở đâu
+        if(objectParams.product_attributes){
+            console.log(updateNestedObjectParser(objectParams.product_attributes))
+         // update child
+            await updateProductById({
+                product_id, 
+                bodyUpdate: updateNestedObjectParser(objectParams.product_attributes),
+                model: clothing})
+        }
+        const updateProduct= await super.updateProduct(product_id, updateNestedObjectParser(objectParams))
+        return updateProduct 
     }
 }
 

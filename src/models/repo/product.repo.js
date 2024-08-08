@@ -67,6 +67,10 @@ const findProduct = async ({product_id, unSelect}) => {
     return  await product.findById(product_id).select(unGetSelectData(unSelect)).lean() // chuyển từ mang ['name', 'price'] sang object {name: 0, price: 0}
 }
 
+const updateProductById = async ({product_id, bodyUpdate, model, isNew = true}) => {
+    return await model.findByIdAndUpdate(product_id, bodyUpdate, {new: isNew})
+}
+
 const queryProducts = async ({query, limit, skip}) => {
     return await product.find(query).
     populate('product_shop', 'name email -_id') // chỉ lấy name và email, không lấy _id từ bảng shop
@@ -84,5 +88,6 @@ module.exports = {
     unPublishProductByShop,
     searchProductsByUser,
     findAllProduct,
-    findProduct
+    findProduct,
+    updateProductById
 }
