@@ -170,10 +170,11 @@ class DiscountService{
             // foundDiscount.discount_uses_count += 1
             // foundDiscount.discount_max_uses -= 1
             // await discountModel.findByIdAndUpdate(foundDiscount._id, foundDiscount)
-            await discountModel.findOneAndUpdate(foundDiscount._id, {
-                $push: {discount_users_used: userId},
-                $inc: {discount_uses_count: 1, discount_max_uses: -1}
-            })
+            // chỗ này ko nên update, vì user chỉ xem discount bao nhiêu thôi, chứ chưa mua nên chưa áp dụng
+            // await discountModel.findOneAndUpdate(foundDiscount._id, {
+            //     $push: {discount_users_used: userId},
+            //     $inc: {discount_uses_count: 1, discount_max_uses: -1}
+            // })
         }
 
         // check xem type của discount
